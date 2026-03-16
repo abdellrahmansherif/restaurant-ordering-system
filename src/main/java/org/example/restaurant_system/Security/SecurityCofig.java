@@ -30,7 +30,7 @@ public class SecurityCofig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);g
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
