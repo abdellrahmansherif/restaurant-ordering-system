@@ -5,6 +5,7 @@ import org.example.restaurant_system.DTO.LoginRequest;
 import org.example.restaurant_system.DTO.RegisterRequest;
 import org.example.restaurant_system.DTO.RegisterResponse;
 import org.example.restaurant_system.Repositories.UserRepository;
+import org.example.restaurant_system.Security.JWTservice;
 import org.example.restaurant_system.models.Role;
 import org.example.restaurant_system.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class UserService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JWTservice jwTservice;
 
     public RegisterResponse Register(RegisterRequest Requset) {
         if (userRepository.existsByEmail(Requset.email())) {
@@ -57,7 +61,7 @@ public class UserService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
-            return "jwTservice.generateToken(username)";
+            return jwTservice.generateToken(request.email());
         } catch (Exception e) {
             Throwable root = e;
             while (root.getCause() != null) root = root.getCause();
