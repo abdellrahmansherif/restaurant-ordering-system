@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(
-        name = "user",
+        name = "app_user",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uq_user_email", columnNames = "email"),
                 @UniqueConstraint(name = "uq_user_phone", columnNames = "phone_number")
