@@ -30,10 +30,12 @@ public class UserController {
     @PostMapping("login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest Request)
     {
-        try{
+        try {
             return ResponseEntity.ok(userService.Signin(Request));
-        }catch (IllegalStateException e){
-            return ResponseEntity.status(409).body(e.getMessage()); // conflict
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            return ResponseEntity.status(401).body("Invalid email or password");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Unexpected error");
         }

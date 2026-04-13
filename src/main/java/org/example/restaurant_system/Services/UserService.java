@@ -2,6 +2,7 @@ package org.example.restaurant_system.Services;
 
 import jakarta.validation.Valid;
 import org.example.restaurant_system.DTO.LoginRequest;
+import org.example.restaurant_system.DTO.LoginResponse;
 import org.example.restaurant_system.DTO.RegisterRequest;
 import org.example.restaurant_system.DTO.RegisterResponse;
 import org.example.restaurant_system.Repositories.UserRepository;
@@ -56,19 +57,12 @@ public class UserService {
         return response;
     }
 
-    public String Signin(LoginRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.email(), request.password())
-            );
-            return jwTservice.generateToken(request.email());
-        } catch (Exception e) {
-            Throwable root = e;
-            while (root.getCause() != null) root = root.getCause();
-            return "AUTH FAILED: " + e.getClass().getSimpleName()
-                    + " | msg=" + e.getMessage()
-                    + " | root=" + root.getClass().getSimpleName()
-                    + " | rootMsg=" + root.getMessage();
-        }
+    public LoginResponse Signin(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+
+        String token = jwTservice.generateToken(request.email());
+        return new LoginResponse(token);
     }
 }
