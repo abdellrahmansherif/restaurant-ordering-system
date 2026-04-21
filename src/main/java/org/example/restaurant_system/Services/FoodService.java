@@ -1,6 +1,8 @@
 package org.example.restaurant_system.Services;
 
 import jakarta.validation.constraints.NotBlank;
+import org.example.restaurant_system.Controller.AddFoodResponse;
+import org.example.restaurant_system.Controller.FoodDto;
 import org.example.restaurant_system.DTO.AddFoodRequest;
 import org.example.restaurant_system.Repositories.FoodCategoryRepository;
 import org.example.restaurant_system.Repositories.FoodRepository;
@@ -29,7 +31,7 @@ public class FoodService {
                 .orElseThrow(() -> new IllegalStateException("food not found with id: " + id));
     }
 
-    public String addFood(AddFoodRequest req) {
+    public AddFoodResponse addFood(AddFoodRequest req) {
         if (req == null) {
             throw new IllegalStateException("Food body is required");
         }
@@ -66,7 +68,15 @@ public class FoodService {
 
         foodRepository.save(newFood);
 
-        return "food " + newFood.getFoodName() + " is added successfully";
+        return new AddFoodResponse(
+                "Food added successfully",
+                newFood.getFoodId(),
+                newFood.getFoodName(),
+                newFood.getPrice(),
+                newFood.getIsAvailable(),
+                category.getCategoryId(),
+                category.getCategoryName()
+        );
     }
 
     public void DeleteFood(Integer id) {
@@ -85,14 +95,23 @@ public class FoodService {
             throw new IllegalStateException("category noy found");
         }
     }
-    public List<Food> getAvailableFoods() {
-        return foodRepository.findByIsAvailableTrue();
-    }
     public List<Food> searchFoodsByName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalStateException("Food name is required");
         }
 
         return foodRepository.findByFoodNameContainingIgnoreCase(name.trim());
+    }
+    public List<FoodDto> getAvailableFoods() {
+        return foodRepository.findByIsAvailableTrue()
+                .stream()
+                .map(food -> new FoodDto(
+                        food.getFoodId(),
+                        food.getFoodName(),
+                        food.getPrice(),
+                        food.getIsAvailable(),
+                        food.getCategory().getCategoryName()
+                ))
+                .toList();
     }
 }

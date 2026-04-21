@@ -4,6 +4,7 @@ package org.example.restaurant_system.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -34,7 +35,23 @@ public class SecurityCofig {
                 .cors(Customizer.withDefaults())
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll())
+                        .requestMatchers("/login", "/register", "/h2-console/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/foods/available").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/foods/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/foods/category/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/foods/*").permitAll()
+
+                        // admin only
+                        .requestMatchers(HttpMethod.POST, "/categories/AddCategory").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/categories/*").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/foods/AddFood").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/foods/*").hasRole("ADMIN")
+
+                        // any logged-in user or admin
+                        .anyRequest().authenticated())
+
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

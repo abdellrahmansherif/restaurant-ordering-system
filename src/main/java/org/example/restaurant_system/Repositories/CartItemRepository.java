@@ -1,5 +1,6 @@
 package org.example.restaurant_system.Repositories;
 
+import jakarta.transaction.Transactional;
 import org.example.restaurant_system.models.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,5 +17,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Integer> {
 
     void deleteByCart_CartIdAndFood_FoodId(Integer cartId, Integer foodId);
 
+    @Transactional
     void deleteByCart_CartId(Integer cartId);
 }

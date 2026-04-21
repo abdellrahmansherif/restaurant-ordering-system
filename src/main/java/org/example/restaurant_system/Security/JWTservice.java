@@ -42,7 +42,7 @@ public class JWTservice {
                 .add(claims)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+60*60*20))
+                .expiration(new Date(System.currentTimeMillis()+1000L * 60 * 60 ))
                 .and()
                 .signWith(GetKey())
                 .compact();
