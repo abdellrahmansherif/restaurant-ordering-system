@@ -12,7 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -22,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-public class SecurityCofig {
+public class SecurityConfig {
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
@@ -37,19 +37,25 @@ public class SecurityCofig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/h2-console/**").permitAll()
 
+                        // Public food endpoints
                         .requestMatchers(HttpMethod.GET, "/foods/available").permitAll()
                         .requestMatchers(HttpMethod.GET, "/foods/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/foods/category/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/foods/*").permitAll()
 
-                        // admin only
+                        // Public category endpoints
+                        .requestMatchers(HttpMethod.GET, "/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories/*").permitAll()
+
+                        // Admin only - categories
                         .requestMatchers(HttpMethod.POST, "/categories/AddCategory").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categories/*").hasRole("ADMIN")
 
+                        // Admin only - foods
                         .requestMatchers(HttpMethod.POST, "/foods/AddFood").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/foods/*").hasRole("ADMIN")
 
-                        // any logged-in user or admin
+                        // Any logged-in user or admin
                         .anyRequest().authenticated())
 
                 .httpBasic(Customizer.withDefaults())
@@ -59,7 +65,7 @@ public class SecurityCofig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -72,15 +78,19 @@ public class SecurityCofig {
         return provider;
     }
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-    {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        // Allow both Angular (4200) and React (5173) development servers
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:4200",
+                "http://localhost:5173",
+                "http://localhost:3000"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
