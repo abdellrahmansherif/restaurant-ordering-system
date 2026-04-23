@@ -1,0 +1,72 @@
+<div class="menu-container">
+  <div class="menu-header">
+    <h1>Our Menu</h1>
+    <p>Discover our delicious offerings</p>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="searchFoods()"
+        placeholder="🔍 Search for dishes..."
+      />
+    </div>
+
+    <!-- Category Filter -->
+    <div class="category-filter" *ngIf="uniqueCategories.length > 0">
+      <button
+        class="category-btn"
+        [class.active]="selectedCategory === null"
+        (click)="filterByCategory(null)"
+      >
+        All
+      </button>
+      <button
+        *ngFor="let category of uniqueCategories"
+        class="category-btn"
+        [class.active]="selectedCategory === category"
+        (click)="filterByCategory(category)"
+      >
+        {{ category }}
+      </button>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <p>Loading menu items...</p>
+  </div>
+
+  <div class="menu-grid" *ngIf="!isLoading">
+    <div class="food-card" *ngFor="let food of filteredFoods">
+      <div class="food-image">
+        🍽️
+      </div>
+
+      <div class="food-info">
+        <span class="category-tag" *ngIf="food.categoryName">{{ food.categoryName }}</span>
+        <h3>{{ food.foodName }}</h3>
+        <p class="price">${{ food.price }}</p>
+
+        <div class="availability" [class.available]="food.isAvailable">
+          {{ food.isAvailable ? '✓ Available' : '✗ Not Available' }}
+        </div>
+
+        <button
+          class="add-to-cart-btn"
+          (click)="addToCart(food)"
+          [disabled]="!food.isAvailable"
+        >
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="no-results" *ngIf="filteredFoods.length === 0">
+      <p>No dishes found matching your search.</p>
+    </div>
+  </div>
+</div>

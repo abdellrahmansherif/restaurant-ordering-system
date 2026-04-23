@@ -7,7 +7,7 @@ import restaurant_system.Repositories.CartRepository;
 import restaurant_system.Repositories.OrderItemRepository;
 import restaurant_system.Repositories.OrderRepository;
 import restaurant_system.Repositories.UserRepository;
-import org.example.restaurant_system.models.*;
+import restaurant_system.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

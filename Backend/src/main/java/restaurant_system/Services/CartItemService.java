@@ -1,6 +1,6 @@
 package restaurant_system.Services;
 
-import org.example.restaurant_system.DTO.*;
+import restaurant_system.DTO.*;
 import restaurant_system.DTO.AddCartItemRequest;
 import restaurant_system.DTO.AddItemResponse;
 import restaurant_system.DTO.CartItemDto;
@@ -9,7 +9,7 @@ import restaurant_system.Repositories.CartItemRepository;
 import restaurant_system.Repositories.CartRepository;
 import restaurant_system.Repositories.FoodRepository;
 import restaurant_system.Repositories.UserRepository;
-import org.example.restaurant_system.models.*;
+import restaurant_system.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
